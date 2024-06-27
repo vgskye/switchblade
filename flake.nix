@@ -14,7 +14,7 @@
     ];
 
     forAllSystems = nixpkgs.lib.genAttrs systems;
-    nixpkgsFor = forAllSystems (system: import nixpkgs {inherit system;});
+    nixpkgsFor = forAllSystems (system: nixpkgs.legacyPackages.${system});
 
     packageFn = pkgs:
       pkgs.rustPlatform.buildRustPackage {
