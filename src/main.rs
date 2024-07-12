@@ -1,6 +1,6 @@
 use std::{
     fs::{File, OpenOptions},
-    os::{fd::OwnedFd, unix::fs::OpenOptionsExt},
+    os::{fd::{AsFd, OwnedFd}, unix::fs::OpenOptionsExt},
     path::Path,
     process::Command,
 };
@@ -10,6 +10,7 @@ use input::{
     Event, Libinput, LibinputInterface,
 };
 use libc::{O_RDONLY, O_RDWR, O_WRONLY};
+use nix::poll::{poll, PollFd, PollFlags, PollTimeout};
 use serde::Deserialize;
 
 struct Interface;
@@ -67,5 +68,7 @@ fn main() {
                 }
             }
         }
+        let fd = PollFd::new(input.as_fd(), PollFlags::POLLIN);
+        poll(&mut [fd], PollTimeout::NONE).unwrap();
     }
 }
